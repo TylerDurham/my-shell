@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+# #############################################################################
+#
+# ██████╗ ██╗  ██╗ ██████╗       ██╗███╗   ██╗███████╗████████╗ █████╗ ██╗     ██╗
+# ██╔══██╗██║ ██╔╝██╔════╝       ██║████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██║     ██║
+# ██████╔╝█████╔╝ ██║  ███╗█████╗██║██╔██╗ ██║███████╗   ██║   ███████║██║     ██║
+# ██╔═══╝ ██╔═██╗ ██║   ██║╚════╝██║██║╚██╗██║╚════██║   ██║   ██╔══██║██║     ██║
+# ██║     ██║  ██╗╚██████╔╝      ██║██║ ╚████║███████║   ██║   ██║  ██║███████╗███████╗
+# ╚═╝     ╚═╝  ╚═╝ ╚═════╝       ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝
+# =============================================================================
+# sys-pkg-install
+# =============================================================================
+# Installs one or more packages using the appropriate package manager for the
+# current OS. Skips packages that are already installed.
+#
+# USAGE:
+#   sys-pkg-install <package> [package...]
+#
+# EXAMPLE:
+#   sys-pkg-install git curl ripgrep
+#
+# SUPPORTED:
+#   arch   — yay
+#   macos  — brew
+#   ubuntu — apt-get
+#
+# DEPENDENCIES:
+#   sys-get-os, sys-pkg-check, logger.sh
+# =============================================================================
+
+LOG_LIB="$USER_LIB_DIR/bash/logger.sh"
+source "$LOG_LIB" || { echo "FATAL: Could not load logger library '$LOG_LIB'!"; exit 1; }
+
+usage() {
+source "$0.help"
+exit 1
+}
+
+declare -a PACKAGES
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -h|--help)       usage ;;
+    -v|--verbose)    LOG_LEVEL=8; shift ;;
+    -f|--file)       PACKAGE_FILE=$2; shift 2 ;;
+    *)               PACKAGES+=($1); shift ;;
+  esac
+done
+
+OS=$(sys-get-os)
+
+get-install-cmd() {
+
+  case "$OS" in
+    arch)  echo "yay -S --needed --quiet --noconfirm" ;;
+    macos) echo "brew install" ;;
+    fedora) fatal "Not implemented yet!" ;;
+    ubuntu) echo "sudo apt-get install -y" ;;
+  esac
+}
+
+# Load packages from the specified file
+if [[ -n "$PACKAGE_FILE" && -f "$PACKAGE_FILE" ]]; then
+  debug "Loading packages from '$PACKAGE_FILE'..."
+  mapfile -t PACKAGES < <(sed -e 's/#.*//g' -e '/^$/d' $PACKAGE_FILE)
+fi
+
+PACKAGE_COUNT=${#PACKAGES[@]}
+[ $PACKAGE_COUNT -eq 0 ] && error "No packages specified!" && usage
+debug "'$OS': $PACKAGE_COUNT packages to install."
+
+declare -a PACKAGES_TO_INSTALL
+
+for package in "${PACKAGES[@]}"; do
+  # Build an array of packages that DO NOT exist on the system
+  if sys-pkg-check "$package" "$OS" ; then
+    debug "Package $(bold_green $package) already installed. Nothing to do."
+  else
+    PACKAGES_TO_INSTALL+=($package)
+  fi
+done
+
+# Build install command based on OS
+cmd=$(get-install-cmd)
+$cmd "${PACKAGES_TO_INSTALL[@]}" 
+
+

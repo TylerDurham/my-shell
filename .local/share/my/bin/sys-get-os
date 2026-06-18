@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+# ############################################################################
+#
+#  ██████╗ ███████╗████████╗    ██████╗ ███████╗
+# ██╔════╝ ██╔════╝╚══██╔══╝   ██╔═══██╗██╔════╝
+# ██║  ███╗█████╗     ██║█████╗██║   ██║███████╗
+# ██║   ██║██╔══╝     ██║╚════╝██║   ██║╚════██║
+# ╚██████╔╝███████╗   ██║      ╚██████╔╝███████║
+#  ╚═════╝ ╚══════╝   ╚═╝       ╚═════╝ ╚══════╝
+#
+# =============================================================================
+# sys-get-os
+# =============================================================================
+# Detects and prints the current operating system identifier.
+#
+# USAGE:
+#   sys-get-os
+#
+# OUTPUT:
+#   One of: macos | arch | fedora | ubuntu | unknown
+#
+# EXAMPLE:
+#   os=$(sys-get-os)
+#   [[ "$os" == "arch" ]] && echo "Running on Arch Linux"
+# =============================================================================
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "macos"
+elif [[ -f /etc/arch-release ]]; then
+    echo "arch"
+elif [[ -f /etc/fedora-release ]]; then
+    echo "fedora"
+elif [[ -f /etc/lsb-release ]] && grep -q "Ubuntu" /etc/lsb-release; then
+    echo "ubuntu"
+elif command -v lsb_release &> /dev/null && [[ $(lsb_release -si) == "Ubuntu" ]]; then
+    echo "ubuntu"
+else
+    echo "unknown"
+    exit 1
+fi
+
