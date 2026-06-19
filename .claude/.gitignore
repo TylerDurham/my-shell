@@ -1,0 +1,14 @@
+*.jsonl
+.credentials.json
+backups/
+cache/
+downloads/
+file-history/
+history.jsonl
+mcp-needs-auth-cache.json
+plans/
+plugins/
+projects/
+sessions/
+shell-snapshots/
+tool-results/

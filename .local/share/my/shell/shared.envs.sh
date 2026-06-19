@@ -31,7 +31,10 @@ export MY_LIB_DIR="$MY_LIB_DIR"
 export MY_LOG_DIR="$MY_LOG_DIR"
 export MY_WALLPAPER_DIR="$MY_WALLPAPER_DIR"
 export PATH="$MY_BIN_DIR:$HOME/go/bin:/usr/local/go/bin:$PATH"
-export PATH=$PATH:$(go env GOPATH)/bin
+
+if command -v go &>/dev/null; then
+  export PATH=$PATH:$(go env GOPATH)/bin
+fi
 
 # # =======================================================================================
 # # LOGGING
