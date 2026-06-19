@@ -1,11 +1,11 @@
-#
-# ███████╗██╗  ██╗███████╗██╗     ██╗     
-# ██╔════╝██║  ██║██╔════╝██║     ██║     
-# ███████╗███████║█████╗  ██║     ██║     
-# ╚════██║██╔══██║██╔══╝  ██║     ██║     
-# ███████║██║  ██║███████╗███████╗███████╗
-# ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
-                                         
+
+███████╗██╗  ██╗███████╗██╗     ██╗     
+██╔════╝██║  ██║██╔════╝██║     ██║     
+███████╗███████║█████╗  ██║     ██║     
+╚════██║██╔══██║██╔══╝  ██║     ██║     
+███████║██║  ██║███████╗███████╗███████╗
+╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
+                                        
 Personal dotfiles for Bash and Zsh, designed to work across macOS, Arch Linux, Ubuntu, and Fedora. Uses [GNU Stow](https://www.gnu.org/software/stow/) to symlink files into `$HOME` and a modular installer that can set up or revert everything in one command.
 
 ## Quick Start
