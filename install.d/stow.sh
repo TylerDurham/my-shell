@@ -9,7 +9,7 @@ TARGET="$HOME/"
 
 if [[ -z "$REVERT" ]]; then
   info "Stowing '$SOURCE' to '$TARGET'..."
-  stow --dir $SOURCE -S . -t $TARGET
+  stow --no-folding --dir $SOURCE -S . -t $TARGET
 
 else
   info "Unstowing '$SOURCE' from '$TARGET'..."
