@@ -1,2 +1,2 @@
-source ~/.local/share/tylerd/shell/aliases
-source ~/.local/share/tylerd/shell/envs
+source ~/.local/share/my/shell/aliases
+source ~/.local/share/my/shell/envs
