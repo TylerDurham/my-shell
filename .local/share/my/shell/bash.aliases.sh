@@ -1,5 +1,5 @@
 
-source "$USER_INSTALL_DIR/shell/shared.aliases.sh"
+source "$MY_INSTALL_DIR/shell/shared.aliases.sh"
 
 mrequire() {
   local module guard file

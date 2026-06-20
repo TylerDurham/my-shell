@@ -1,2 +1,2 @@
 
-source "$USER_INSTALL_DIR/shell/shared.envs.sh"
+source "$MY_INSTALL_DIR/shell/shared.envs.sh"

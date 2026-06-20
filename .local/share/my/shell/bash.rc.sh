@@ -3,7 +3,7 @@
 # ==============================================================================
 
 source "$HOME/.local/share/my/shell/shared.envs.sh"
-source "$USER_INSTALL_DIR/shell/shared.aliases.sh"
+source "$MY_INSTALL_DIR/shell/shared.aliases.sh"
 
 if command -v starship >& /dev/null; then
   eval "$(starship init bash)"
