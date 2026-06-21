@@ -1,7 +1,7 @@
 ---
 description: Open a PR from the current branch using recent commits, then merge it
 argument-hint: "[--base <branch>] [--draft]"
-allowed-tools: Bash(git log:*), Bash(git branch:*), Bash(git status:*), Bash(git diff:*), Bash(gh pr create:*), Bash(gh pr merge:*), Bash(gh pr view:*), Bash(gh repo view:*)
+allowed-tools: Bash(git log:*), Bash(git branch:*), Bash(git status:*), Bash(git diff:*), Bash(git push:*), Bash(gh pr create:*), Bash(gh pr merge:*), Bash(gh pr view:*), Bash(gh repo view:*), Bash(grep:*)
 ---
 
 ## Arguments
@@ -14,7 +14,7 @@ Parse `$ARGUMENTS`:
 
 - Repo: !`gh repo view --json nameWithOwner -q .nameWithOwner`
 - Current branch: !`git branch --show-current`
-- Base branch candidates: !`git branch -r | grep -E 'origin/(master|main)' | sed 's|origin/||' | tr -d ' '`
+- Base branch candidates: !`git branch -r | grep -oE 'origin/(master|main)' | grep -oE 'master|main'`
 - Commits ahead of master: !`git log origin/master..HEAD --oneline 2>/dev/null || git log origin/main..HEAD --oneline 2>/dev/null`
 - Full commit details: !`git log origin/master..HEAD --format="subject: %s%nbody: %b%n---" 2>/dev/null || git log origin/main..HEAD --format="subject: %s%nbody: %b%n---" 2>/dev/null`
 - Diff stat: !`git diff origin/master...HEAD --stat 2>/dev/null || git diff origin/main...HEAD --stat 2>/dev/null`
