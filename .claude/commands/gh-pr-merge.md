@@ -1,7 +1,7 @@
 ---
 description: Open a PR from the current branch using recent commits, then merge it
 argument-hint: "[--base <branch>] [--draft]"
-allowed-tools: Bash(git log:*), Bash(git branch:*), Bash(git status:*), Bash(git diff:*), Bash(gh pr create:*), Bash(gh pr merge:*), Bash(gh pr view:*), Bash(gh repo view:*)
+allowed-tools: Bash(git log:*), Bash(git branch:*), Bash(git status:*), Bash(git diff:*), Bash(git push:*), Bash(gh pr create:*), Bash(gh pr merge:*), Bash(gh pr view:*), Bash(gh repo view:*), Bash(grep:*), Bash(sed:*), Bash(tr:*)
 ---
 
 ## Arguments
