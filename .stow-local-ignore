@@ -5,3 +5,4 @@
 ^setup$
 ^install\.d$
 ^temp$
+^settings\.local\.json$
