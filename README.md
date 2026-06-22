@@ -41,9 +41,7 @@ The `setup` script runs each module in `install.d/` in order: create directories
 
 | File | Purpose |
 |------|---------|
-| `tmux.conf` | Main config — vim-style navigation, popup support, mouse, TPM bootstrap |
-| `theme.conf` | Custom status bar theme |
-| `os-icon.sh` | Detects current OS (including NixOS) and outputs the matching icon |
+| `tmux.conf` | Main config — vim-style navigation, popup support, mouse, inlined status bar theme |
 | `popup.sh` | Helper for launching floating popup windows |
 | `tpm.sh` | Bootstraps [TPM](https://github.com/tmux-plugins/tpm) if not installed |
 
@@ -66,6 +64,8 @@ Custom slash commands for [Claude Code](https://claude.ai/code):
 | `/file-header` | Add an ASCII banner + description header to a file |
 | `/tag` | Create an annotated semantic version tag on HEAD |
 | `/gh-issue` | Create a well-formed GitHub issue via `gh` |
+| `/gh-pr-merge` | Open a PR from the current branch and squash-merge it |
+| `/update-readme` | Sync the README to reflect the current state of the repo |
 
 ### CLI Utilities (`bin/`)
 
