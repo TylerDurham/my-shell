@@ -185,7 +185,14 @@ else
     # Disable all colors if not in terminal or NO_COLOR is set
     COLOR_RESET=""
     STYLE_BOLD="" STYLE_DIM="" STYLE_ITALIC="" STYLE_UNDERLINE=""
-    # You can clear all COLOR_* variables here if you want full disable
+    COLOR_BLACK="" COLOR_RED="" COLOR_GREEN="" COLOR_YELLOW=""
+    COLOR_BLUE="" COLOR_PURPLE="" COLOR_CYAN="" COLOR_WHITE=""
+    COLOR_BBold="" COLOR_BRed="" COLOR_BGreen="" COLOR_BYellow=""
+    COLOR_BBlue="" COLOR_BPurple="" COLOR_BCyan="" COLOR_BWhite=""
+    COLOR_BIBlack="" COLOR_BIRed="" COLOR_BIGreen="" COLOR_BIYellow=""
+    COLOR_BIBlue="" COLOR_BIPurple="" COLOR_BICyan="" COLOR_BIWhite=""
+    COLOR_BGBlack="" COLOR_BGRed="" COLOR_BGGreen="" COLOR_BGYellow=""
+    COLOR_BGBlue="" COLOR_BGPurple="" COLOR_BGCyan="" COLOR_BGWhite=""
 fi
 
 # Default log level (if nothing is set)
@@ -245,7 +252,7 @@ error() {
 
 fatal() {
   if log_level_ge 0; then
-    echo "$(bold_red $(to_upper $FUNCNAME)) $@" 
+    echo "$(bold_red $(to_upper $FUNCNAME)) $@" >&2 
   fi
   exit 1
 }
