@@ -85,6 +85,98 @@ Custom slash commands for [Claude Code](https://claude.ai/code):
 | `require.sh` | Module loader for Bash — sources scripts by name with dedup guards |
 | `logger.sh` | Colored, leveled logging (debug/info/warn/error/fatal) with style helpers |
 
+## Using `bin/` and `lib/` Scripts
+
+### Sourcing the Libraries
+
+Libraries live in `.local/share/my/lib/bash/`. Source them directly or use `require.sh` for dedup-safe loading:
+
+```bash
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+
+# Direct source
+source "$PROJECT_ROOT/.local/share/my/lib/bash/logger.sh"
+
+# Via require.sh (safe to call multiple times — loads each module at most once)
+source "$PROJECT_ROOT/.local/share/my/lib/bash/require.sh" logger
+```
+
+`require.sh` resolves modules by name from `$MY_LIB_DIR/bash/`, or by explicit path if the argument starts with `/` or `./`.
+
+### Logging
+
+`logger.sh` provides leveled logging controlled by `LOG_LEVEL` (default: `1` = ERROR and above):
+
+```bash
+LOG_LEVEL=8  # enable all levels
+export LOG_LEVEL
+
+debug "low-level detail"   # level 8
+info  "status message"     # level 4
+warn  "something is off"   # level 2
+error "something failed"   # level 1
+fatal "unrecoverable"      # level 0 — also calls exit 1
+```
+
+Style helpers are available for ad-hoc output:
+
+```bash
+bold_green "Done!"
+dim "skipping..."
+red "uh oh"
+```
+
+Colors are auto-disabled when stdout is not a terminal (e.g. when output is captured or piped).
+
+### Pattern: UI-Aware Top-Level Scripts
+
+Child scripts (workers, installers, helpers) should write freely to stdout/stderr and exit with meaningful codes. Top-level scripts that interact with the desktop or a user-facing UI own the notification layer — they capture child output and handle it in an EXIT trap.
+
+```bash
+#!/usr/bin/env bash
+
+on_exit() {
+  if (( $? > 0 )); then
+    notify-send "ERROR $(basename "$0")" "An error occurred:\n\n$msg"
+    error "$msg"
+  else
+    notify-send "Success!" "$msg"
+  fi
+}
+
+set -euEo pipefail
+
+trap on_exit EXIT
+
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+source "$PROJECT_ROOT/.local/share/my/lib/bash/logger.sh"
+
+msg=""  # initialize before any early exit so the trap is always safe
+
+msg=$("$PROJECT_ROOT/.local/share/my/bin/some-child-script" "$@" 2>&1)
+```
+
+Key points:
+- `set -euEo pipefail` — exit on any error, unset variable, or pipe failure
+- `trap on_exit EXIT` — the handler always runs, success or failure
+- `msg=""` — must be initialized before the first command that can fail; otherwise `set -u` will crash the trap if it fires early
+- `2>&1` — merges stderr into stdout so the full child output (logs + errors) becomes the notification body
+
+### `bin/` Scripts
+
+The `bin/` scripts are standalone and callable from any script once `$MY_BIN_DIR` is on `$PATH` (set up by the shell config after install):
+
+```bash
+# Detect OS
+os=$(sys-get-os)           # → "arch", "ubuntu", "macos", etc.
+
+# Install packages (skips already-installed)
+sys-pkg-install git curl ripgrep
+
+# Check if a package is present
+sys-pkg-check fzf && echo "fzf is installed"
+```
+
 ## Shell Integrations
 
 The Zsh config auto-detects and initializes these tools when available:

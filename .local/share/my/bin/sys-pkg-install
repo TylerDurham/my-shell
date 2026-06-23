@@ -29,8 +29,11 @@
 #   sys-get-os, sys-pkg-check, logger.sh
 # =============================================================================
 
-LOG_LIB="$USER_LIB_DIR/bash/logger.sh"
-source "$LOG_LIB" || { echo "FATAL: Could not load logger library '$LOG_LIB'!"; exit 1; }
+# libs
+if ! . "$my_lib_dir/bash/require.sh" logger; then
+  echo "could not load libraries from '$my_lib_dir'!" >&2
+  exit 1
+fi
 
 usage() {
 source "$0.help"
