@@ -10,7 +10,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   export PATH="$(brew --prefix)/bin:$PATH"
 fi 
 
-PREFIX=my
 export MY_INSTALL_DIR="$HOME/.local/share/my" #$(dtdconfig get env.INSTALL_DIR | envsubst)" 
 export MY_BIN_DIR="$HOME/.local/share/my/bin" #$(dtdconfig get env.BIN_DIR | envsubst)"
 export MY_LIB_DIR="$MY_INSTALL_DIR/lib" #$(dtdconfig get env.LIB_DIR | envsubst)"

@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # OS_ICONS — maps a lowercase OS key (as returned by detect_os) to a Nerd Font
 # glyph escape. Values are stored as "\uXXXX" strings; expand them at use time
 # with printf '%b' (see the lookup helper at the bottom).
@@ -8,13 +10,13 @@
 declare -A OS_ICONS=(
     # --- Non-Linux / generic ---
     [windows]="\uf17a"       # fa-windows (Font Logos has no Windows glyph)
-    [macos]="\uf302"         # linux-apple (consistent w/ the Font Logos set)
+    [macos]=""         # linux-apple (consistent w/ the Font Logos set)
     [freebsd]="\uf30c"
     [openbsd]="\uf328"       # detect_os can emit this; netbsd has no FL glyph
     [unknown]="\uf109"       # fa-laptop — fallback for detect_os "unknown"
                              # alt generic Linux: \uf17c (Tux) or \uf31a (linux-tux)
  
-    # --- The ones you asked for ---
+    # --- Thekones you asked for ---
     [arch]="\uf303"
     [nixos]="\uf313"
     [fedora]="\uf30a"
