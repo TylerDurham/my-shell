@@ -7,7 +7,9 @@ init "$@"
 MODULES=(
   "mkdirs.sh"
   "bash.sh"
+  "bash-upgrade-macos.sh"
   "zsh.sh"
+  "git.sh"
   "stow.sh"
 )
 
