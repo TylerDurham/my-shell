@@ -9,6 +9,7 @@ DIRECTORIES=(
   "$HOME/.local/share/$PREFIX/lib"
   "$HOME/.local/share/$PREFIX/shell"
   "$HOME/.config/$PREFIX"
+  "$HOME/.claude"
 )
 
 for DIR in "${DIRECTORIES[@]}"; do
