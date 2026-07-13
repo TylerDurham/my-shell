@@ -39,4 +39,5 @@ ai-call-ollama -s "$SYSTEM_PROMPT" -p "$DIFF" -m "$MODEL" --stream \
 echo >> "$TMPFILE"
 
 ${EDITOR:-vi} "$TMPFILE"
+
 git -C "$CALL_DIR" commit -F "$TMPFILE"
