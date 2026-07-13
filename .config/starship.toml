@@ -60,27 +60,31 @@ stashed = "stashed "
 # stashed = "📦 "
 #
 # # Python version
-# [python]
-# symbol = "🐍 "
-# style = "yellow"
-# pyenv_version_name = true
-#
+[python]
+symbol = "🐍 "
+style = "yellow"
+pyenv_version_name = true
+
 # # Node.js version
-# [nodejs]
-# symbol = " "
-# style = "green"
-#
+[nodejs]
+symbol = " "
+style = "green"
+
+[golang]
+symbol = "🐹 "
+style = "bold cyan"
+format = 'via [$symbol($version )]($style) '
+version_format = "v${major}.${minor}"   #
+
 # # Rust version
 # [rust]
 # symbol = "🦀 "
 # style = "red"
 #
 # # Docker context
-# [docker_context]
-# symbol = "🐳 "
-# style = "cyan"
-
-
+[docker_context]
+symbol = "🐳 "
+style = "cyan"
 
 [palettes.catppuccin_mocha]
 rosewater = "#f5e0dc"
