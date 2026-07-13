@@ -61,16 +61,22 @@ Custom slash commands for [Claude Code](https://claude.ai/code):
 |---------|-------------|
 | `/cc` | Stage and create a Conventional Commit (with optional issue close) |
 | `/commit` | Create a well-formed conventional commit from staged changes |
+| `/encode` | Encode MakeMKV rips into movies or TV shows using HandBrake presets |
 | `/file-header` | Add an ASCII banner + description header to a file |
 | `/tag` | Create an annotated semantic version tag on HEAD |
 | `/gh-issue` | Create a well-formed GitHub issue via `gh` |
 | `/gh-pr-merge` | Open a PR from the current branch and squash-merge it |
+| `/rip-disc` | Rip Blu-ray / 4K UHD discs with MakeMKV into `~/Rippy/@imports` |
 | `/update-readme` | Sync the README to reflect the current state of the repo |
 
 ### CLI Utilities (`bin/`)
 
 | Command | Description |
 |---------|-------------|
+| `ai-call-ollama` | Call a local or remote Ollama instance with a model, system prompt, and user prompt |
+| `ai-git-commit-msg` | Generate a Conventional Commit message from staged diff using Ollama, then open it in `$EDITOR` |
+| `backup-calibre.sh` | Archive and sync Calibre library from a remote host to local Dropbox backup |
+| `sys-cache-thumbnail` | Generate and cache thumbnails for media files |
 | `sys-get-os` | Detect the current OS (macos, arch, ubuntu, fedora) |
 | `sys-pkg-install` | Install packages with the right package manager for the current OS |
 | `sys-pkg-check` | Check if a package is already installed |
@@ -176,6 +182,57 @@ sys-pkg-install git curl ripgrep
 # Check if a package is present
 sys-pkg-check fzf && echo "fzf is installed"
 ```
+
+### AI Tools (`ai-call-ollama`, `ai-git-commit-msg`)
+
+These scripts talk to an [Ollama](https://ollama.com/) API endpoint. The target host is controlled by the `OLLAMA_HOST` environment variable, which defaults to `http://localhost:11434`.
+
+`shared.envs.sh` sets `OLLAMA_HOST` to a remote instance. To override it for a session, or to point at a local Ollama instance instead:
+
+```bash
+export OLLAMA_HOST="http://localhost:11434"
+```
+
+To make the override permanent, add the export to `~/ollama.env.sh` (this file is sourced automatically by `shared.envs.sh` when it exists, and is gitignored):
+
+```bash
+echo 'export OLLAMA_HOST="http://localhost:11434"' >> ~/ollama.env.sh
+```
+
+#### `ai-call-ollama`
+
+Send a prompt to any Ollama model and print the response:
+
+```bash
+# Basic usage
+ai-call-ollama -m llama3.1 -s "You are a terse assistant." -p "What is a VLAN?"
+
+# Pipe the user prompt from stdin
+echo "Explain BGP in one sentence." | ai-call-ollama -m qwen2.5-coder:14b -s "Be concise."
+
+# Stream the raw response as it generates
+ai-call-ollama -m mistral -s "You are helpful." -p "Summarize TCP/IP." --stream
+```
+
+| Flag | Description |
+|------|-------------|
+| `-m`, `--model` | Model name (e.g. `llama3.1`, `qwen2.5-coder:14b`) |
+| `-s`, `--system` | System prompt |
+| `-p`, `--prompt` | User prompt (or pipe via stdin) |
+| `--stream` | Stream raw JSON lines as the model generates |
+
+Requires `curl` and `jq`.
+
+#### `ai-git-commit-msg`
+
+Generate a Conventional Commit message from the currently staged diff, open it in `$EDITOR` for review, then commit:
+
+```bash
+git add -p          # stage your changes
+ai-git-commit-msg   # generate, edit, and commit
+```
+
+The script uses `qwen2.5-coder:14b` by default and respects `OLLAMA_HOST`.
 
 ## Shell Integrations
 
