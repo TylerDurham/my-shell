@@ -28,8 +28,6 @@ DIFF=$(git -C "$CALL_DIR" diff --staged)
 
 MODEL="qwen2.5-coder:14b"
 
-export OLLAMA_HOST="https://ollama.snork.co"
-
 TMPFILE=$(mktemp --suffix=.txt)
 trap 'rm -f "$TMPFILE"' EXIT
 
