@@ -205,7 +205,7 @@ Send a prompt to any Ollama model and print the response:
 
 ```bash
 # Basic usage
-ai-call-ollama -m llama3.1 -s "You are a terse assistant." -p "What is a VLAN?"
+ai-call-ollama -m llama3.2 -s "You are a terse assistant." -p "What is a VLAN?"
 
 # Pipe the user prompt from stdin
 echo "Explain BGP in one sentence." | ai-call-ollama -m qwen2.5-coder:14b -s "Be concise."
