@@ -35,6 +35,9 @@ if command -v go &>/dev/null; then
   export PATH=$PATH:$(go env GOPATH)/bin
 fi
 
+# NOTE: Homelab APIs
+export OLLAMA_HOST="https://ollama.snork.co"
+
 # # =======================================================================================
 # # LOGGING
 # # =======================================================================================
