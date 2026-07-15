@@ -38,6 +38,11 @@ fi
 # NOTE: Homelab APIs
 export OLLAMA_HOST="https://ollama.snork.co"
 
+# 1Password socket exits - configure ssh-agent
+if [[ -S ~/.1password/agent.sock ]]; then
+  export SSH_AUTH_SOCK=~/.1password/agent.sock
+fi
+
 # # =======================================================================================
 # # LOGGING
 # # =======================================================================================
@@ -64,6 +69,7 @@ declare -rx MY_ENVS_LOADED=1 &> /dev/null
 export LIBGUESTFS_BACKEND=direct
 export LIBVIRT_DEFAULT_URI="qemu:///system"
 
+# NVM
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
