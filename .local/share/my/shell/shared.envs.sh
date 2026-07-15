@@ -18,7 +18,7 @@ export MY_LOG_DIR="/tmp" #$(dtdconfig get env.LOG_DIR | envsubst)"
 export MY_APP_DIR="$HOME/.local/share/applications" #$(dtdconfig get env.APP_DIR | envsubst)"
 export MY_WALLPAPER_DIR="$HOME/Pictures/wallpapers" #$(dtdconfig get theme.WALLPAPER_DIR | envsubst)"
 export MY_THEME_DIR="$MY_INSTALL_DIR/themes"
-export MY_CURRENT_THEME_DIR="$MY_CONFIG_DIR/current"
+export MY_CURRENT_THEME_DIR="$MY_CONFIG_DIR/theme"
 mkdir -p "$MY_LOG_DIR" # Ensure log directory exists
 
 # NOTE: New "my" prefix
