@@ -16,9 +16,7 @@ export MY_LIB_DIR="$MY_INSTALL_DIR/lib" #$(dtdconfig get env.LIB_DIR | envsubst)
 export MY_CONFIG_DIR="$HOME/.config/my" #$(dtdconfig get env.CONFIG_DIR | envsubst)"
 export MY_LOG_DIR="/tmp" #$(dtdconfig get env.LOG_DIR | envsubst)"
 export MY_APP_DIR="$HOME/.local/share/applications" #$(dtdconfig get env.APP_DIR | envsubst)"
-export MY_WALLPAPER_DIR="$HOME/Pictures/wallpapers" #$(dtdconfig get theme.WALLPAPER_DIR | envsubst)"
-export MY_THEME_DIR="$MY_INSTALL_DIR/themes"
-export MY_CURRENT_THEME_DIR="$MY_CONFIG_DIR/theme"
+
 mkdir -p "$MY_LOG_DIR" # Ensure log directory exists
 
 # NOTE: New "my" prefix
@@ -74,3 +72,10 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+# =======================================================================================
+# HOOKs: Run ENV hooks set by other repos
+# =======================================================================================
+for hook in $HOME/.local/share/my/shell/hooks/envs/*.sh; do 
+  # echo "Running hook '$(basename $hook)'..."
+  source "$hook"
+done
