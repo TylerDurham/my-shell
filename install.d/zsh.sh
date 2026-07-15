@@ -4,6 +4,11 @@ source "$(git rev-parse --show-toplevel)/install.d/envs.sh"
 
 init "$@"
 
+if [[ "$(sys-get-os)" == "nixos" ]]; then
+  warn "No need to configure 'zsh' on NixOs."
+  exit 0
+fi
+
 TARGET="$HOME/.zshrc"
 BACKUP="$TARGET.backup"
 

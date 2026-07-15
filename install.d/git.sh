@@ -4,6 +4,11 @@ source "$(git rev-parse --show-toplevel)/install.d/envs.sh"
 
 init "$@"
 
+if [[ "$(sys-get-os)" == "nixos" ]]; then
+  warn "No need to configure 'git' on NixOs."
+  exit 0
+fi
+
 GIT_CONFIGS=(
   "user.name:Tyler Durham"
   "user.email:TylerDurham@noreply.users.github.com"
