@@ -4,12 +4,12 @@ source "$(git rev-parse --show-toplevel)/install.d/envs.sh"
 
 init "$@"
 
-SOURCE="$PROJECT_ROOT_DIR"
+SOURCE="$PROJECT_ROOT_DIR/dotfiles"
 TARGET="$HOME/"
 
 if [[ -z "$REVERT" ]]; then
   info "Stowing '$SOURCE' to '$TARGET'..."
-  stow --no-folding --dir $SOURCE -S . -t $TARGET
+  stow  --dir $SOURCE -S . -t $TARGET
 
 else
   info "Unstowing '$SOURCE' from '$TARGET'..."

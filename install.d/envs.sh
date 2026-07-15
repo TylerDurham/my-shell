@@ -23,9 +23,9 @@ init() {
   done
 }
 
-export MY_LIB_DIR="$PROJECT_ROOT_DIR/.local/share/$PREFIX/lib/"
+export MY_LIB_DIR="$PROJECT_ROOT_DIR/dotfiles/.local/share/$PREFIX/lib/"
 export MY_CONFIG_DIR="$HOME/.config/$PREFIX"
-export MY_BIN_DIR="$PROJECT_ROOT_DIR/.local/$PREFIX/bin"
-export MY_THEME_DIR="$PROJECT_ROOT_DIR/.local/share/$PREFIX/themes"
+export MY_BIN_DIR="$PROJECT_ROOT_DIR/dotfiles/.local/$PREFIX/bin"
+export MY_THEME_DIR="$PROJECT_ROOT_DIR/dotfiles/.local/share/$PREFIX/themes"
 export MY_CURRENT_THEME_DIR="$MY_CONFIG_DIR/current"
 export PATH="$MY_BIN_DIR:$PATH"

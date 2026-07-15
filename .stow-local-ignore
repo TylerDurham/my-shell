@@ -2,7 +2,9 @@
 ^README.md$
 ^\.git$
 ^\.gitignore$
-^setup$
+^install\.sh$
 ^install\.d$
 ^temp$
+^CLAUDE.md$
+^media$
 ^settings\.local\.json$
