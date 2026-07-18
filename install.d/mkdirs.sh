@@ -8,7 +8,7 @@ init "$@"
 DIRECTORIES=(
   "$HOME/.local/share/$PREFIX/bin"
   "$HOME/.local/share/$PREFIX/lib/bash"
-  "$HOME/.local/share/$PREFIX/shell/hooks/envs"
+  "$HOME/.local/share/$PREFIX/shell/hooks/"{envs,boot}
   "$HOME/.config/$PREFIX"
   "$HOME/.claude/commands"
 )
