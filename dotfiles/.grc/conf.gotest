@@ -10,19 +10,19 @@ regexp=--- PASS: .* (\(\d+\.\d+s\))
 colour=green, black
 -
 regexp=^PASS$
-colour=bold black on_green
+colour=bold black green
 -
 regexp=^(ok|FAIL)\s+.*
 colour=default, magenta
 -
 regexp=\s+expected
-colour=bold
+colour=bold green
 -
 regexp=--- FAIL: .* (\(\d+\.\d+s\))
 colour=red, black
 -
 regexp=^FAIL$
-colour=bold white on_red
+colour=bold white red
 -
 regexp=[^\s]+\.go(:\d+)?
 colour=cyan
