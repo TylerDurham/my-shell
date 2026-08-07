@@ -61,6 +61,12 @@ while [[ $# -gt 0 ]]; do
         -h|--help)
             usage
             ;;
+        -t|--test)
+            SYSTEM_PROMPT="You are an expert at condensing text."
+            USER_PROMPT="Summarize the Art of War in 1 Paragraph."
+            MODEL="llama3.2:latest"
+            shift
+            ;;
         *)
             echo "Unknown option: $1" >&2
             usage
@@ -99,6 +105,8 @@ PAYLOAD=$(jq -n \
     --arg prompt "$USER_PROMPT" \
     --argjson stream "$STREAM" \
     '{model: $model, system: $system, prompt: $prompt, stream: $stream}')
+
+echo $PAYLOAD
 
 # --- Call Ollama ---
 if [[ "$STREAM" == true ]]; then
