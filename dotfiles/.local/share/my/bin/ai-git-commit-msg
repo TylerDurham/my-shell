@@ -1,4 +1,6 @@
-#!/usr/bin/env bash 
+#!/usr/bin/env bash
+
+set -euo pipefail
 
 SYSTEM_PROMPT="You are a git commit message generator. You will be given a git diff and must output a single commit message following the Conventional Commits specification (https://www.conventionalcommits.org).
 
@@ -26,6 +28,30 @@ Rules:
 CALL_DIR="$PWD"
 DIFF=$(git -C "$CALL_DIR" diff --staged)
 
+if [[ -z "$DIFF" ]]; then
+    echo "Error: no staged changes to describe" >&2
+    exit 1
+fi
+
+# Resolve the editor up front so a missing one fails before we burn a model call.
+# Note: no 'vi' fallback — it is not present on every supported platform.
+# GIT_EDITOR is deliberately ignored: automation sets it to 'true' to suppress
+# editors, which would silently commit the unreviewed message.
+EDITOR_CMD="${VISUAL:-${EDITOR:-}}"
+
+if [[ -z "$EDITOR_CMD" ]]; then
+    echo "Error: VISUAL/EDITOR is not set" >&2
+    exit 1
+fi
+
+# EDITOR may carry arguments (e.g. 'code --wait'), so split on words.
+read -ra EDITOR_ARGV <<< "$EDITOR_CMD"
+
+if ! command -v "${EDITOR_ARGV[0]}" &>/dev/null; then
+    echo "Error: editor '${EDITOR_ARGV[0]}' not found on PATH" >&2
+    exit 1
+fi
+
 MODEL="qwen2.5-coder:14b"
 
 TMPFILE=$(mktemp --suffix=.txt)
@@ -36,6 +62,15 @@ ai-call-ollama -s "$SYSTEM_PROMPT" -p "$DIFF" -m "$MODEL" --stream \
     | tee "$TMPFILE"
 echo >> "$TMPFILE"
 
-${EDITOR:-vi} "$TMPFILE"
+if ! "${EDITOR_ARGV[@]}" "$TMPFILE"; then
+    echo "Error: editor exited non-zero — aborting commit" >&2
+    exit 1
+fi
+
+# An emptied buffer is the conventional way to abort a commit.
+if [[ ! -s "$TMPFILE" ]] || ! grep -qv '^[[:space:]]*$' "$TMPFILE"; then
+    echo "Aborting commit due to empty commit message." >&2
+    exit 1
+fi
 
 git -C "$CALL_DIR" commit -F "$TMPFILE"
