@@ -90,4 +90,4 @@ Reload config: `prefix + r` (displays a status message on success).
 
 ## Ghostty
 
-Machine-local overrides go in `~/.config/ghostty/local.ghostty` (gitignored). The auto-loaded theme is at `.config/ghostty/auto/theme.ghostty`.
+Machine-local overrides go in `~/.config/ghostty/local.ghostty` (gitignored). The auto-loaded theme is at `.config/ghostty/auto/theme.ghostty`, which includes `~/.config/my/theme/ghostty.conf` — the palette of whichever my-hyprland theme is currently applied. The include is optional (`?`), so this config still works without my-hyprland installed. To pin a fixed palette instead, replace that line with `theme = <name>` from `ghostty +list-themes`.

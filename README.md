@@ -50,7 +50,7 @@ The `setup` script runs each module in `install.d/` in order: create directories
 | File | Purpose |
 |------|---------|
 | `config.ghostty` | Terminal config — padding, keybinds, SSH integration |
-| `auto/theme.ghostty` | Ayu theme (auto-loaded) |
+| `auto/theme.ghostty` | Follows the active my-hyprland theme (auto-loaded) |
 | `local.ghostty` | Optional machine-local overrides (gitignored) |
 
 ### Claude Code (`.claude/`)
