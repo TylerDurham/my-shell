@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 
-CURRENT_SESSION=$(tmux display-message -p -F "#{session_name}")
+POPUP_SUFFIX="-popup"
 
-if [[ "$CURRENT_SESSION" == popup_* ]]; then
+CURRENT_SESSION=$(tmux display-message -p -F "#{session_name}")
+POPUP_SESSION="${CURRENT_SESSION}${POPUP_SUFFIX}"
+
+# Already inside a popup session — the toggle just detaches. Test the suffix on
+# CURRENT_SESSION, not against POPUP_SESSION: in here POPUP_SESSION would be a
+# doubled-up "<session>-popup-popup" and never match.
+if [[ "$CURRENT_SESSION" == *"$POPUP_SUFFIX" ]]; then
   tmux detach-client
 else
-  WINDOW_ID=$(tmux display-message -p "#{window_id}" | tr -d '@')
-  POPUP_SESSION="popup_${WINDOW_ID}"
+  #  WINDOW_ID=$(tmux display-message -p "#{window_id}" | tr -d '@')
   CWD=$(tmux display-message -p "#{pane_current_path}")
   # if tmux has-session -t "$POPUP_SESSION" 2>/dev/null; then
   # tmux send-keys -t "$POPUP_SESSION" " cd $(printf '%q' "$CWD")" Enter
