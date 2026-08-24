@@ -14,10 +14,20 @@ if [[ "$(sys-get-os)" == "nixos" ]]; then
   exit 0
 fi
 
-MISE_BIN="${MISE_INSTALL_PATH:-$HOME/.local/bin/mise}"
+# Resolve mise: an explicit override first, then the copy 'dev/mise.sh'
+# installs (which may not be on PATH yet during a fresh setup run), then
+# whatever is on PATH -- that last one covers a package-manager install
+# such as /usr/bin/mise on Arch.
+if [[ -n "$MISE_INSTALL_PATH" ]]; then
+  MISE_BIN="$MISE_INSTALL_PATH"
+elif [[ -x "$HOME/.local/bin/mise" ]]; then
+  MISE_BIN="$HOME/.local/bin/mise"
+else
+  MISE_BIN=$(command -v mise)
+fi
 
 if [[ ! -x "$MISE_BIN" ]]; then
-  fatal "'mise' not found at '$MISE_BIN'. Run '$CWD/mise.sh' first."
+  fatal "'mise' not found on PATH or at '$HOME/.local/bin/mise'. Run '$CWD/mise.sh' first."
 fi
 
 if [[ -z "$REVERT" ]]; then
