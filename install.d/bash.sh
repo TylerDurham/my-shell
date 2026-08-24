@@ -18,7 +18,7 @@ if [[ -z "$REVERT" ]]; then
     warn "'$TARGET' exists... backing up to '$BACKUP'..."
     mv $TARGET $BACKUP
   fi
-  echo "source ~/.local/share/$PREFIX/shell/zsh.rc.sh" > $TARGET
+  echo "source ~/.local/share/$PREFIX/shell/bash.rc.sh" > $TARGET
 else
   if [[ -f "$BACKUP" ]]; then
     info "Restoring '$TARGET' from '$BACKUP'..."
