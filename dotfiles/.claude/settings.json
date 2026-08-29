@@ -35,5 +35,9 @@
       "**Org-specific CLIs**: None configured",
       "routine under /home/dtd/Projects/my-shell/ prefix (this project's working tree)"
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"$HOME/.claude/statusline-command.sh\""
   }
 }
