@@ -89,7 +89,7 @@ Custom slash commands for [Claude Code](https://claude.ai/code):
 | Library | Description |
 |---------|-------------|
 | `require.sh` | Module loader for Bash — sources scripts by name with dedup guards |
-| `logger.sh` | Colored, leveled logging (debug/info/warn/error/fatal) with style helpers |
+| `logger.sh` | Logging (debug/info/warn/error/fatal/success), ANSI color and style helpers, badges, and layout filters |
 
 ## Using `bin/` and `lib/` Scripts
 
@@ -111,28 +111,64 @@ source "$PROJECT_ROOT/.local/share/my/lib/bash/require.sh" logger
 
 ### Logging
 
-`logger.sh` provides leveled logging controlled by `LOG_LEVEL` (default: `1` = ERROR and above):
+`logger.sh` provides a family of log helpers, all of which write to **stderr**:
 
 ```bash
-LOG_LEVEL=8  # enable all levels
-export LOG_LEVEL
-
-debug "low-level detail"   # level 8
-info  "status message"     # level 4
-warn  "something is off"   # level 2
-error "something failed"   # level 1
-fatal "unrecoverable"      # level 0 — also calls exit 1
+info    "status message"      # [INFO] status message
+warn    "something is off"    # [WARNING] something is off
+error   "something failed"    # [ERROR] something failed
+success "all done"            # [OK] all done          — alias: ok
+debug   "low-level detail"    # [DEBUG] low-level detail
+fatal 2 "unrecoverable"       # [FATAL] unrecoverable  — then exits 2
 ```
 
-Style helpers are available for ad-hoc output:
+`fatal` takes the **exit status as its first argument**, and it is required — `fatal "msg"` will not do what you want.
+
+Each helper has a `_badge` variant (`info_badge`, `error_badge`, …) that prefixes a colored chip instead of a bracketed label:
 
 ```bash
-bold_green "Done!"
-dim "skipping..."
-red "uh oh"
+error_badge "disk full"       #  ▌ ERROR  disk full
 ```
 
-Colors are auto-disabled when stdout is not a terminal (e.g. when output is captured or piped).
+Only `debug` is gated on `LOG_LEVEL`. Everything from `info` up always prints, on the grounds that a script that bothered to call `warn` wants it seen. `shared.envs.sh` exports `LOG_LEVEL=4` (INFO) and the `LOG_LEVEL_*` constants for every session, so turn debug output on per-invocation:
+
+```bash
+LOG_LEVEL=8 ./myscript        # or: LOG_LEVEL=$LOG_LEVEL_DEBUG ./myscript
+```
+
+### Colors, Styles, and Layout
+
+Color and style helpers are generated from the `COLORS`, `BG_COLORS`, and `STYLES` tables, so the function name is just the lowercased table key. They write to stdout with **no trailing newline**, which keeps them composable — the caller owns the line breaks.
+
+```bash
+red "uh oh"; echo
+dim "skipping..."; echo
+bg_yellow "$(black " WARN ")"; echo
+
+# No combined names like bold_green — nest instead, to any depth:
+bold "$(green ok) rest"; echo    # "ok" bold+green, " rest" still bold
+```
+
+Available: `black` `red` `green` `yellow` `blue` `purple` `cyan` `white` plus their `bright_*` variants, the same set again as `bg_*` backgrounds, and the styles `bold` `dim` `italic` `underline`.
+
+Higher-order formatters and layout filters:
+
+```bash
+fmt_badge red ERROR; echo " disk full"        # inline chip, accent on a muted ground
+fmt_block RED "Deploy failed" "see the log"   # multi-line block of colored ground
+printf '%s\n' one two | fmt_block BLUE        # ...or read the lines from stdin
+
+{ green "ok"; echo; } | indent 2              # prefix each line with 2 spaces
+pad_right 10 "$(blue "[INFO]")"               # align to 10 *display* columns
+```
+
+`pad_left`/`pad_right` measure what a string **looks like**, not what it weighs, so colored and accented text still lines up. `fmt_block` is the one helper that does emit newlines — a block is inherently line-oriented.
+
+Badges are drawn from the [Catppuccin](https://catppuccin.com) palette in 24-bit color, falling back to plain ANSI grounds when `COLORTERM` isn't `truecolor`. `mocha` is the default flavor; switch with `catppuccin_flavor macchiato` after sourcing, or set `CATPPUCCIN_FLAVOR` before.
+
+Escapes are emitted only when **stderr** is a terminal, so redirected output stays plain. Note the asymmetry: the check is on stderr while most helpers write to stdout, which means color survives a pipe (`red msg | indent 2`) but also survives `red msg > file`.
+
+Run `test/logger.sh` to see every color, style, badge, and flavor rendered in your terminal.
 
 ### Pattern: UI-Aware Top-Level Scripts
 
