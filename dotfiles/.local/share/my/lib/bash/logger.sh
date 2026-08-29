@@ -555,6 +555,13 @@ fmt_block() {
 # Labels are not padded to a common width, so they sit ragged against each
 # other ([INFO] is 6 columns, [WARNING] is 9). Wrap a label in `pad_right 10`
 # if you want the messages to line up in a column.
+#
+# Only debug is gated on LOG_LEVEL - everything from info up always prints, on
+# the grounds that a script that bothered to call warn or error wants it seen.
+# shared.envs.sh exports LOG_LEVEL=4 (INFO) and the LOG_LEVEL_* constants for
+# every session, so raise it per-invocation or per-script:
+#
+#   LOG_LEVEL=8 ./myscript          # or: LOG_LEVEL=$LOG_LEVEL_DEBUG
 
 # Report an error the caller can recover from. Does not exit - use fatal for
 # that.
@@ -608,12 +615,35 @@ warn_badge() {
   fmt_badge yellow "WARNING" >&2; echo " $@" >&2;
 }
 
+# True when LOG_LEVEL admits debug output. Private - the debug helpers call it.
+#
+# LOG_LEVEL is read at CALL time, not source time, so a script can raise it
+# after sourcing and later debug calls pick that up. An unset or non-numeric
+# value falls back to LOG_LEVEL_INFO, which keeps a stray `LOG_LEVEL=verbose`
+# from aborting an arithmetic comparison under `set -e`.
+_debug_enabled() {
+  local level="${LOG_LEVEL:-${LOG_LEVEL_INFO:-4}}"
+  [[ "$level" =~ ^[0-9]+$ ]] || level="${LOG_LEVEL_INFO:-4}"
+  (( level >= ${LOG_LEVEL_DEBUG:-8} ))
+}
+
+# Report detail useful only when diagnosing. Silent unless LOG_LEVEL is at
+# least 8 (LOG_LEVEL_DEBUG); see _debug_enabled.
+#
+#   $@    the message
+#
+#   LOG_LEVEL=8 ./myscript   ->  [DEBUG] resolved path: /etc/my.conf
 debug() {
+  _debug_enabled || return 0
   local label="$(bold $(dim '[DEBUG]'))"
   echo "$label ${@}" >&2
 }
 
+# Badge form of debug: a " DEBUG " chip on overlay2. Gated the same way.
+#
+#   $@    the message
 debug_badge() {
+  _debug_enabled || return 0
   fmt_badge overlay2 "DEBUG" >&2; echo " $@" >&2;
 }
 

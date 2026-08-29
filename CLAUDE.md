@@ -45,19 +45,41 @@ source "$PROJECT_ROOT/.local/share/my/lib/bash/require.sh" logger
 
 Resolves modules by name from `$MY_LIB_DIR/bash/`. Safe to call multiple times — each module is sourced at most once per session via guard variables.
 
-### `logger.sh` — leveled logging
+### `logger.sh` — logging, color, and layout
 
-Controlled by `LOG_LEVEL` (default: `4` = INFO and above after install).
+Log helpers write to **stderr**; every other helper writes to stdout with **no trailing newline**, so they compose inside `$(...)` and pipelines.
 
 ```bash
-debug "..."   # level 8
-info  "..."   # level 4
-warn  "..."   # level 2
-error "..."   # level 1
-fatal "..."   # level 0 — exits 1
+info    "..."   # [INFO]
+warn    "..."   # [WARNING]
+error   "..."   # [ERROR]
+debug   "..."   # [DEBUG]
+success "..."   # [OK]   — alias: ok
+fatal 2 "..."   # [FATAL] — exits with the status in $1 (required, must be numeric)
 ```
 
-Style helpers for ad-hoc output: `bold_green`, `dim`, `red`, etc. Colors are auto-disabled when stdout is not a terminal.
+Each has a `_badge` variant (`info_badge`, `error_badge`, …) that prefixes a colored chip instead of a bracketed label.
+
+Only `debug` is gated on `LOG_LEVEL` (default `4` = INFO, exported by `shared.envs.sh`); it needs `8` (`LOG_LEVEL_DEBUG`). Everything from `info` up always prints. The value is read at call time, so raising it after sourcing works, and a non-numeric value falls back to INFO rather than aborting.
+
+Color and style helpers are generated from the `COLORS`, `BG_COLORS`, and `STYLES` tables: `red`, `bright_cyan`, `bg_yellow`, `bold`, `dim`, `italic`, `underline`. Combined names like `bold_green` do not exist — nest instead, to any depth:
+
+```bash
+bold "$(green ok) rest"          # "ok" bold+green, " rest" still bold
+```
+
+Escapes are emitted only when **stderr** is a terminal (note the asymmetry: the text itself goes to stdout).
+
+| Helper | Purpose |
+|---|---|
+| `fmt_badge <accent> <label>` | inline chip — Catppuccin accent text on `surface0` |
+| `fmt_block <BG> [FG] <line>…` | multi-line colored rectangle; reads stdin if given no lines, and is the only helper that emits newlines |
+| `indent [n]` | pipe filter, prefixes each line with `n` spaces (default 4) |
+| `pad_left` / `pad_right <w> <s>` | align to `w` *display* columns, escape-aware |
+
+Badges use the Catppuccin palette in 24-bit color, falling back to ANSI grounds when `COLORTERM` isn't `truecolor`. Switch flavors with `catppuccin_flavor macchiato` (or set `CATPPUCCIN_FLAVOR` before sourcing); `mocha` is the default.
+
+`test/logger.sh` renders every color, style, badge, and flavor for eyeballing.
 
 ### Pattern: UI-Aware Top-Level Scripts
 
