@@ -42,7 +42,8 @@ package="$1"
 
 case "$os" in
   arch)
-    yay -Q "$package" &>/dev/null || exit 1
+    # pacman's local db covers AUR packages too, so this works without yay.
+    pacman -Q "$package" &>/dev/null || exit 1
     ;;
 
   ubuntu)
