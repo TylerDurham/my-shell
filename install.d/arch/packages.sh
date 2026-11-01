@@ -2,6 +2,7 @@
 
 packages=(
     bun
+    ghostty
     github-cli
     go-tools
     gopls
