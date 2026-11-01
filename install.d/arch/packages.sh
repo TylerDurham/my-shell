@@ -31,6 +31,7 @@ packages=(
 [[ "$OS" != "cachyos" ]] && packages+=$(python)
 [[ "$OS" != "cachyos" ]] && packages+=$(vim)
 [[ "$OS" != "cachyos" ]] && packages+=$(zsh)
+[[ "$OS" != "cachyos" ]] && packages+=$(kitty)
 
 on_init() {
     info "initializing module '$(basename $0)'"
