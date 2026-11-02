@@ -42,11 +42,11 @@ local state_file = vim.fn.stdpath("data") .. "/saved_colorscheme.txt"
 ---        to ensure highlights persist after colorscheme changes.
 local function set_blink_highlights()
   local h = vim.api.nvim_set_hl
-  -- doc popup: deep navy bg with bright border
-  h(0, "BlinkCmpDoc",        { bg = "#1e2030", fg = "#c8d3f5" })
+  -- doc popup: transparent bg (terminal shows through) with bright border
+  h(0, "BlinkCmpDoc",        { bg = "NONE", fg = "#c8d3f5" })
   h(0, "BlinkCmpDocBorder",  { fg = "#82aaff", bold = true })
   -- completion menu
-  h(0, "BlinkCmpMenu",       { bg = "#1e2030", fg = "#c8d3f5" })
+  h(0, "BlinkCmpMenu",       { bg = "NONE", fg = "#c8d3f5" })
   h(0, "BlinkCmpMenuBorder", { fg = "#3d59a1" })
   h(0, "BlinkCmpMenuSelection", { bg = "#2d3f76", bold = true })
 end
