@@ -16,5 +16,10 @@ confirm-close-surface = false
 
 shell-integration-features = ssh-terminfo,ssh-env
 
+# Cursor smear (Neovide-style trail). Path is relative to this config dir.
+# 'always' keeps it from freezing when the cursor turns hollow on unfocus.
+custom-shader = shaders/cursor_warp.glsl
+custom-shader-animation = always
+
 # Allow local overrides
 config-file = ?local.ghostty
