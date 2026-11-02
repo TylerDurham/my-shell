@@ -24,18 +24,18 @@ packages=(
 )
 
 # don't add if on cachyos.. installed by default
-[[ "$OS" != "cachyos" ]] && packages+=$(fzf)
-[[ "$OS" != "cachyos" ]] && packages+=$(git)
-[[ "$OS" != "cachyos" ]] && packages+=$(python)
-[[ "$OS" != "cachyos" ]] && packages+=$(vim)
-[[ "$OS" != "cachyos" ]] && packages+=$(zsh)
+[[ "$OS" != "cachyos" ]] && packages+=(fzf)
+[[ "$OS" != "cachyos" ]] && packages+=(git)
+[[ "$OS" != "cachyos" ]] && packages+=(python)
+[[ "$OS" != "cachyos" ]] && packages+=(vim)
+[[ "$OS" != "cachyos" ]] && packages+=(zsh)
 
 on_init() {
-  info "initializing module '$(basename $0)'"
+  info "initializing module '$(basename "${BASH_SOURCE[0]}")'"
 }
 
 on_install() {
-  info "installing module '$(basename $0)'"
+  info "installing module '$(basename "${BASH_SOURCE[0]}")'"
   for package in "${packages[@]}"; do
     if ! check-package "$package"; then
       info "installing package '$package'..."
@@ -47,7 +47,7 @@ on_install() {
 }
 
 on_uninstall() {
-  info "uninstalling module '$(basename $0)'"
+  info "uninstalling module '$(basename "${BASH_SOURCE[0]}")'"
   for package in "${packages[@]}"; do
     if check-package "$package"; then
       sudo pacman -Rs --noconfirm "$package"

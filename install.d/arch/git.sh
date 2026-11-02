@@ -48,7 +48,7 @@ on_install() {
 }
 
 on_uninstall() {
-  info "uninstalling module '$(basename $BASH_SOURCE[0])'"
+  info "uninstalling module '$(basename "${BASH_SOURCE[0]}")'"
   local entry key
 
   for entry in "${GIT_CONFIGS[@]}"; do

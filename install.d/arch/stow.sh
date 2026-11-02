@@ -12,10 +12,10 @@ on_install() {
 }
 
 on_uninstall() {
-  info "uninstalling module '$(basename $BASH_SOURCE[0])'"
+  info "uninstalling module '$(basename "${BASH_SOURCE[0]}")'"
 
   debug "un-stowing '$SOURCE' to '$TARGET'..."
-  stow -v --dir $SOURCE -R . -t $TARGET
+  stow -v --dir "$SOURCE" -D . -t "$TARGET"
 }
 
 on_completed() {

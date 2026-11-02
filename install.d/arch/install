@@ -93,6 +93,14 @@ else
   mapfile -t modules < <(sys-list-items "$INSTALL_ROOT/*.sh")
 fi
 
+# Tear down in reverse order so later modules (e.g. stow) are undone before
+# the earlier ones they depend on (e.g. mkdirs).
+if [[ "$ACTION" == "uninstall" ]]; then
+  for (( i = 0, j = ${#modules[@]} - 1; i < j; i++, j-- )); do
+    tmp="${modules[i]}"; modules[i]="${modules[j]}"; modules[j]="$tmp"
+  done
+fi
+
 for module in "${modules[@]}"; do
     source "$module"
 

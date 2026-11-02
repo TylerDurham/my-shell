@@ -21,7 +21,7 @@ on_install() {
 }
 
 on_uninstall() {
-  info "uninstalling module '$(basename $BASH_SOURCE[0])'"
+  info "uninstalling module '$(basename "${BASH_SOURCE[0]}")'"
   if [[ -f "$BACKUP" ]]; then
     debug "restoring '$TARGET' from '$BACKUP'..."
     mv $BACKUP $TARGET

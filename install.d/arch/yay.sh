@@ -28,14 +28,14 @@ on_init() {
 
 # Called by source script. Installs the module.
 on_install() {
-  info "installing module '$(basename $0)'"
+  info "installing module '$(basename "${BASH_SOURCE[0]}")'"
   debug "$FUNCNAME: installing yay..."
   install_yay
 }
 
 # Called by source script. Uninstalls the module.
 on_uninstall() {
-  info "uninstalling module '$(basename $0)'"
+  info "uninstalling module '$(basename "${BASH_SOURCE[0]}")'"
   debug "$FUNCNAME: Removing yay..."
   uninstall_yay
 }

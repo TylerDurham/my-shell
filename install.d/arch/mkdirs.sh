@@ -8,11 +8,11 @@ DIRECTORIES=(
 )
 
 on_init() {
-  info "initializing module '$(basename $0)'"
+  info "initializing module '$(basename "${BASH_SOURCE[0]}")'"
 }
 
 on_install() {
-  info "installing module '$(basename $0)'"
+  info "installing module '$(basename "${BASH_SOURCE[0]}")'"
   for dir in "${DIRECTORIES[@]}"; do
     debug "creating directory at '$dir'..."
     mkdir -p "$dir"
@@ -20,10 +20,16 @@ on_install() {
 }
 
 on_uninstall() {
-  info "uninstalling module '$(basename $0)'"
+  info "uninstalling module '$(basename "${BASH_SOURCE[0]}")'"
+  # Only remove directories that are empty, so user files (e.g. custom
+  # Claude commands or local config) are never deleted.
   for dir in "${DIRECTORIES[@]}"; do
-    warn "removing directory at '$dir'..." 2>&1 | indent
-    rm -rf "$dir"
+    [[ -d "$dir" ]] || continue
+    if rmdir "$dir" 2>/dev/null; then
+      debug "removed empty directory '$dir'"
+    else
+      warn "'$dir' is not empty... leaving it in place" 2>&1 | indent
+    fi
   done
 }
 
