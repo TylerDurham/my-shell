@@ -4,6 +4,12 @@ config-file = ?auto/theme.ghostty
 window-padding-x = 10
 window-padding-y = 10
 
+# Translucent, blurred background. On macOS, opacity changes need a full
+# restart (reload isn't enough). Blur works on macOS/KDE; Hyprland blurs via
+# its own decoration:blur.
+background-opacity = 0.85
+background-blur = 20
+
 # keybinds
 
 keybind = shift+ctrl+h=previous_tab
@@ -15,6 +21,11 @@ keybind = ctrl+shift+x=close_tab
 confirm-close-surface = false
 
 shell-integration-features = ssh-terminfo,ssh-env
+
+# Cursor smear (Neovide-style trail). Path is relative to this config dir.
+# 'always' keeps it from freezing when the cursor turns hollow on unfocus.
+custom-shader = shaders/cursor_warp.glsl
+custom-shader-animation = always
 
 # Allow local overrides
 config-file = ?local.ghostty

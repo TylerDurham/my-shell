@@ -19,6 +19,16 @@
 # Requires bash 4+ (associative arrays, `declare -g`, `${var,,}`).
 # =============================================================================
 
+[[ -n "${_LOGGER_SH_INCLUDED:-}" ]] && return 0
+readonly _LOGGER_SH_INCLUDED=1
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/require.sh" "err_codes"
+
+# # Glyph drawn at the badge's leading edge, in the accent color. A left half
+# # block reads as a solid bar in most fonts; set to "" for no bar.
+BADGE_BAR=$'▌'
+
 # COLORS
 
 # Set to a non-empty value to mean "suppress color". Currently declared but
@@ -95,72 +105,69 @@ declare -g -A BG_COLORS=(
     [BRIGHT_WHITE]=$'\033[107m'
  )
 
-# --- catppuccin palette -----------------------------------------------------
-
-# Badges are drawn from the Catppuccin palette rather than the 16 ANSI slots,
-# because the ANSI slots cannot express a surface color - the muted ground that
-# makes a badge read as a raised chip. That requires 24-bit color.
+# # --- catppuccin palette -----------------------------------------------------
 #
-# Switch flavors with `catppuccin_flavor macchiato` after sourcing, or set
-# CATPPUCCIN_FLAVOR before. Accent-on-surface0 clears WCAG AA in every flavor,
-# including the light one (Latte), where the surfaces darken and the accents
-# lighten in step.
-CATPPUCCIN_FLAVOR="${CATPPUCCIN_FLAVOR:-mocha}"
-
-# Glyph drawn at the badge's leading edge, in the accent color. A left half
-# block reads as a solid bar in most fonts; set to "" for no bar.
-BADGE_BAR=$'▌'
-
-declare -g -A PALETTE=()
-
-# Populate PALETTE for $1 (mocha|macchiato|frappe|latte). Called once at source
-# time; call again to switch. Unknown names leave the palette untouched and
-# return 1.
-catppuccin_flavor() {
-  case "${1,,}" in
-    mocha) PALETTE=(
-      [base]=#1E1E2E   [surface0]=#313244 [surface1]=#45475A [surface2]=#585B70
-      [overlay1]=#7F849C [overlay2]=#9399B2 [subtext1]=#BAC2DE [text]=#CDD6F4
-      [rosewater]=#F5E0DC [flamingo]=#F2CDCD [pink]=#F5C2E7 [mauve]=#CBA6F7
-      [red]=#F38BA8 [maroon]=#EBA0AC [peach]=#FAB387 [yellow]=#F9E2AF
-      [green]=#A6E3A1 [teal]=#94E2D5 [sky]=#89DCEB [sapphire]=#74C7EC
-      [blue]=#89B4FA [lavender]=#B4BEFE ) ;;
-    macchiato) PALETTE=(
-      [base]=#24273A   [surface0]=#363A4F [surface1]=#494D64 [surface2]=#5B6078
-      [overlay1]=#8087A2 [overlay2]=#939AB7 [subtext1]=#B8C0E0 [text]=#CAD3F5
-      [rosewater]=#F4DBD6 [flamingo]=#F0C6C6 [pink]=#F5BDE7 [mauve]=#C6A0F6
-      [red]=#ED8796 [maroon]=#EE99A0 [peach]=#F5A97F [yellow]=#EED49F
-      [green]=#A6DA95 [teal]=#8BD5CA [sky]=#91D7E3 [sapphire]=#7DC4E4
-      [blue]=#8AADF4 [lavender]=#B7BDF8 ) ;;
-    frappe) PALETTE=(
-      [base]=#303446   [surface0]=#414559 [surface1]=#51576D [surface2]=#626880
-      [overlay1]=#838BA7 [overlay2]=#949CBB [subtext1]=#B5BFE2 [text]=#C6D0F5
-      [rosewater]=#F2D5CF [flamingo]=#EEBEBE [pink]=#F4B8E4 [mauve]=#CA9EE6
-      [red]=#E78284 [maroon]=#EA999C [peach]=#EF9F76 [yellow]=#E5C890
-      [green]=#A6D189 [teal]=#81C8BE [sky]=#99D1DB [sapphire]=#85C1DC
-      [blue]=#8CAAEE [lavender]=#BABBF1 ) ;;
-    latte) PALETTE=(
-      [base]=#EFF1F5   [surface0]=#CCD0DA [surface1]=#BCC0CC [surface2]=#ACB0BE
-      [overlay1]=#8C8FA1 [overlay2]=#7C7F93 [subtext1]=#5C5F77 [text]=#4C4F69
-      [rosewater]=#DC8A78 [flamingo]=#DD7878 [pink]=#EA76CB [mauve]=#8839EF
-      [red]=#D20F39 [maroon]=#E64553 [peach]=#FE640B [yellow]=#DF8E1D
-      [green]=#40A02B [teal]=#179299 [sky]=#04A5E5 [sapphire]=#209FB5
-      [blue]=#1E66F5 [lavender]=#7287FD ) ;;
-    *) return 1 ;;
-  esac
-  CATPPUCCIN_FLAVOR="${1,,}"
-}
-catppuccin_flavor "$CATPPUCCIN_FLAVOR" || catppuccin_flavor mocha
-
-# Nearest ANSI background for each accent, used when the terminal cannot do
-# 24-bit color. Coarse by necessity - several accents collapse onto one slot.
-declare -g -A ACCENT_ANSI=(
-  [rosewater]=WHITE [flamingo]=RED    [pink]=PURPLE  [mauve]=PURPLE
-  [red]=RED         [maroon]=RED      [peach]=YELLOW [yellow]=YELLOW
-  [green]=GREEN     [teal]=CYAN       [sky]=CYAN     [sapphire]=CYAN
-  [blue]=BLUE       [lavender]=BLUE   [overlay1]=BRIGHT_BLACK
-  [overlay2]=BRIGHT_BLACK             [subtext1]=WHITE
-)
+# # Badges are drawn from the Catppuccin palette rather than the 16 ANSI slots,
+# # because the ANSI slots cannot express a surface color - the muted ground that
+# # makes a badge read as a raised chip. That requires 24-bit color.
+# #
+# # Switch flavors with `catppuccin_flavor macchiato` after sourcing, or set
+# # CATPPUCCIN_FLAVOR before. Accent-on-surface0 clears WCAG AA in every flavor,
+# # including the light one (Latte), where the surfaces darken and the accents
+# # lighten in step.
+# CATPPUCCIN_FLAVOR="${CATPPUCCIN_FLAVOR:-mocha}"
+#
+#
+# declare -g -A PALETTE=()
+#
+# # Populate PALETTE for $1 (mocha|macchiato|frappe|latte). Called once at source
+# # time; call again to switch. Unknown names leave the palette untouched and
+# # return 1.
+# catppuccin_flavor() {
+#   case "${1,,}" in
+#     mocha) PALETTE=(
+#       [base]=#1E1E2E   [surface0]=#313244 [surface1]=#45475A [surface2]=#585B70
+#       [overlay1]=#7F849C [overlay2]=#9399B2 [subtext1]=#BAC2DE [text]=#CDD6F4
+#       [rosewater]=#F5E0DC [flamingo]=#F2CDCD [pink]=#F5C2E7 [mauve]=#CBA6F7
+#       [red]=#F38BA8 [maroon]=#EBA0AC [peach]=#FAB387 [yellow]=#F9E2AF
+#       [green]=#A6E3A1 [teal]=#94E2D5 [sky]=#89DCEB [sapphire]=#74C7EC
+#       [blue]=#89B4FA [lavender]=#B4BEFE ) ;;
+#     macchiato) PALETTE=(
+#       [base]=#24273A   [surface0]=#363A4F [surface1]=#494D64 [surface2]=#5B6078
+#       [overlay1]=#8087A2 [overlay2]=#939AB7 [subtext1]=#B8C0E0 [text]=#CAD3F5
+#       [rosewater]=#F4DBD6 [flamingo]=#F0C6C6 [pink]=#F5BDE7 [mauve]=#C6A0F6
+#       [red]=#ED8796 [maroon]=#EE99A0 [peach]=#F5A97F [yellow]=#EED49F
+#       [green]=#A6DA95 [teal]=#8BD5CA [sky]=#91D7E3 [sapphire]=#7DC4E4
+#       [blue]=#8AADF4 [lavender]=#B7BDF8 ) ;;
+#     frappe) PALETTE=(
+#       [base]=#303446   [surface0]=#414559 [surface1]=#51576D [surface2]=#626880
+#       [overlay1]=#838BA7 [overlay2]=#949CBB [subtext1]=#B5BFE2 [text]=#C6D0F5
+#       [rosewater]=#F2D5CF [flamingo]=#EEBEBE [pink]=#F4B8E4 [mauve]=#CA9EE6
+#       [red]=#E78284 [maroon]=#EA999C [peach]=#EF9F76 [yellow]=#E5C890
+#       [green]=#A6D189 [teal]=#81C8BE [sky]=#99D1DB [sapphire]=#85C1DC
+#       [blue]=#8CAAEE [lavender]=#BABBF1 ) ;;
+#     latte) PALETTE=(
+#       [base]=#EFF1F5   [surface0]=#CCD0DA [surface1]=#BCC0CC [surface2]=#ACB0BE
+#       [overlay1]=#8C8FA1 [overlay2]=#7C7F93 [subtext1]=#5C5F77 [text]=#4C4F69
+#       [rosewater]=#DC8A78 [flamingo]=#DD7878 [pink]=#EA76CB [mauve]=#8839EF
+#       [red]=#D20F39 [maroon]=#E64553 [peach]=#FE640B [yellow]=#DF8E1D
+#       [green]=#40A02B [teal]=#179299 [sky]=#04A5E5 [sapphire]=#209FB5
+#       [blue]=#1E66F5 [lavender]=#7287FD ) ;;
+#     *) return 1 ;;
+#   esac
+#   CATPPUCCIN_FLAVOR="${1,,}"
+# }
+# catppuccin_flavor "$CATPPUCCIN_FLAVOR" || catppuccin_flavor mocha
+#
+# # Nearest ANSI background for each accent, used when the terminal cannot do
+# # 24-bit color. Coarse by necessity - several accents collapse onto one slot.
+# declare -g -A ACCENT_ANSI=(
+#   [rosewater]=WHITE [flamingo]=RED    [pink]=PURPLE  [mauve]=PURPLE
+#   [red]=RED         [maroon]=RED      [peach]=YELLOW [yellow]=YELLOW
+#   [green]=GREEN     [teal]=CYAN       [sky]=CYAN     [sapphire]=CYAN
+#   [blue]=BLUE       [lavender]=BLUE   [overlay1]=BRIGHT_BLACK
+#   [overlay2]=BRIGHT_BLACK             [subtext1]=WHITE
+# )
 
 # True when the terminal advertises 24-bit color. Inside tmux this also needs
 # `set -ga terminal-overrides ",*:RGB"`, or the escapes are swallowed.
@@ -209,7 +216,9 @@ _print_sgr() {
   local text="${*:2}"
 
   # No colors on terminals that don't support
-  [[ ! -t 2 ]] && { open=""; reset=""; }
+  #[[ ! -t 2 ]] && { open=""; reset=""; }
+
+  # [[ -n $NO_COLOR ]]; printf '%s' "$text"
 
   # Nested helpers close with RESET, which would clear this span too. Re-open
   # ourselves after each one so our attribute survives past the inner span. The
@@ -277,7 +286,7 @@ done
 # color escape on the line, so colors come through intact. Because sed is
 # line-oriented it only sees complete lines: piping a helper directly
 # (`green ok | indent 2`) works, but the caller still supplies the newline.
-indent() { sed "s/^/$(printf '%*s' "${1:-4}" '')/"; }
+indent() { sed "s/^/$(printf '%*s' "${1:-4}" '')/" >&2; }
 
 # Right-align $2 in a field of $1 display columns, padding with leading spaces.
 # No trailing newline. A string wider than the field is printed in full and
@@ -475,17 +484,18 @@ _resolve_ground() {
 # BLOCK_PAD spaces are added on each side of the label. Nested helpers work
 # normally - the badge re-opens its own ground after them, via _print_sgr.
 fmt_badge() {
-  local accent="${1,,}"; shift
+  local accent_color="${COLORS[$1]}"; shift
+  local bg_color="${COLORS[BLACK]}"
   local pad; printf -v pad '%*s' "$BLOCK_PAD" ''
 
-  if _has_truecolor; then
+  # if [[ -z NO_COLOR ]]; then
     local open
-    open="$(_rgb 48 "${PALETTE[surface0]}")$(_rgb 38 "${PALETTE[$accent]}")"
-    _print_sgr "$open" "$BADGE_BAR$pad$*$pad"
-  else
-    _resolve_ground "${ACCENT_ANSI[$accent]}" || return 1
-    _print_sgr "$_OPEN" "$pad$*$pad"
-  fi
+    open="$bg_color$accent_color"
+    _print_sgr "$open" "$BADGE_BAR$pad$(bold $*)$pad"
+  # else
+  #   # _resolve_ground "${ACCENT_ANSI[$accent]}" || return 1
+  #   _print_sgr "$pad$*$pad"
+  # fi
 }
 
 # Multi-line block: a solid rectangle of colored ground with text inside. Every
@@ -595,7 +605,7 @@ info() {
 #
 #   $@    the message
 info_badge() {
-  fmt_badge blue "INFO" >&2; echo " $@" >&2;
+  fmt_badge BLUE "INFO" >&2; echo " $@" >&2;
 }
 
 # Report something suspicious that did not stop the run.
@@ -635,7 +645,7 @@ _debug_enabled() {
 #   LOG_LEVEL=8 ./myscript   ->  [DEBUG] resolved path: /etc/my.conf
 debug() {
   _debug_enabled || return 0
-  local label="$(bold $(dim '[DEBUG]'))"
+  local label="$(bold $(bright_black '[DEBUG]'))"
   echo "$label ${@}" >&2
 }
 
@@ -644,7 +654,7 @@ debug() {
 #   $@    the message
 debug_badge() {
   _debug_enabled || return 0
-  fmt_badge overlay2 "DEBUG" >&2; echo " $@" >&2;
+  fmt_badge PURPLE " DEBUG" >&2; echo " $@" >&2;
 }
 
 # Report an unrecoverable error and TERMINATE THE SCRIPT.
@@ -667,7 +677,7 @@ debug_badge() {
 # The label carries a Nerd Font glyph (U+EA87) ahead of [FATAL]; terminals
 # without a patched font render it as a replacement box.
 fatal() {
-  echo "$(bold $(red ' [FATAL]')) ${*:2}" >&2
+  echo "$(bold $(red ' [FATAL]')) ${*:2}: ${BASH_SOURCE[1]} Line ${BASH_LINENO[0]}" >&2
   exit ${1}
 }
 
@@ -682,6 +692,50 @@ fatal_badge() {
   exit ${1}
 }
 
+# package_badge <install|remove> <package...>
+# Prints a colored badge with an install/remove icon followed by the package list.
+# Globals: none
+# Arguments:
+#   $1 - action ("install" or anything else, treated as "remove")
+#   $@ (after shift) - package name(s) to display
+# Outputs:
+#   Writes formatted badge line to stdout via fmt_badge
+# Returns:
+#   0
+package_badge() {
+  local action="$1"; local name="$2"; shift;
+  local icon
+  if [[ "$action" == "install" ]]; then
+      icon="󱧕"
+  else
+      icon=="󱧙"
+  fi
+
+  shift; fmt_badge GREEN "$icon PKG ${name^^}"; echo "$*"
+}
+
+# module_badge <install|remove> <package...>
+# Prints a colored badge with an install/remove icon followed by the package list.
+# Globals: none
+# Arguments:
+#   $1 - action ("install" or anything else, treated as "remove")
+#   $@ (after shift) - package name(s) to display
+# Outputs:
+#   Writes formatted badge line to stdout via fmt_badge
+# Returns:
+#   0
+
+module_badge() {
+  local action="$1"; local name="$2"; shift;
+  local icon
+  if [[ "$action" == "install" ]]; then
+      icon=""
+  else
+      icon=="󰉘"
+  fi
+
+  shift; fmt_badge BLUE "$icon MOD ${name^^}"; echo "$*"
+}
 success() {
   local label="$(bold $(green '[OK]'))"
   echo "$label ${@}" >&2
