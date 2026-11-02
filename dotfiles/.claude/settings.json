@@ -1,0 +1,6 @@
+{
+  "tui": "fullscreen",
+  "enabledPlugins": {
+    "gopls-lsp@claude-plugins-official": true
+  }
+}
