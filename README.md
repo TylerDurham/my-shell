@@ -19,11 +19,12 @@ Personal dotfiles for Bash, Zsh, tmux, and Ghostty — designed to work across m
 ```bash
 git clone <repo-url> ~/Projects/my-shell
 cd ~/Projects/my-shell
-./setup            # install everything
-./setup -r         # revert to backups
+./install          # install everything
+./install -r       # uninstall and revert to backups
+./install -s       # choose which modules to run
 ```
 
-The `setup` script runs each module in `install.d/` in order: create directories, configure Bash, configure Zsh, then stow dotfiles.
+`./install` detects your OS and runs the matching installer in `install.d/<os>/` (currently `macos` and `arch`, which also covers CachyOS, EndeavourOS and Manjaro). That installer runs each of its modules: packages, directories, Git, Bash, Zsh, and stowing the dotfiles. With `-r`, modules are undone in reverse order.
 
 ## Binaries
 

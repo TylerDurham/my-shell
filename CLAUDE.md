@@ -9,20 +9,25 @@ Personal dotfiles for Bash, Zsh, tmux, and Ghostty — designed to work across m
 ## Install / Uninstall
 
 ```bash
-./setup          # install everything (runs install.d/* in order)
-./setup -r       # revert to pre-install backups
+./install        # install everything
+./install -r     # uninstall, reverting to pre-install backups
+./install -s     # pick modules interactively
 ```
 
-Each module in `install.d/` can also be run standalone with the same `-r` flag.
+`./install` is a thin bootstrap: it detects the OS with `sys-get-os` and execs `install.d/<os>/install` (`macos`, or `arch` for arch/cachyos/endeavour/manjaro), passing options through unchanged. It must stay bash 3.2 compatible, since stock macOS runs it before Homebrew bash exists.
+
+Each per-OS `install` sources the `*.sh` modules in its directory and calls their `on_init`, `on_install`/`on_uninstall` and `on_completed` hooks (reverse order on `-r`). The per-OS `install` can be run directly with the same flags; individual modules cannot, since they rely on the helpers it defines.
 
 ## How Stow Works Here
 
-`stow.sh` runs `stow --no-folding --dir $PROJECT_ROOT -S . -t $HOME`, which mirrors the repo's directory tree directly into `$HOME`. That means:
+Everything that gets linked into `$HOME` lives under `dotfiles/`. The `stow.sh` module in each `install.d/<os>/` runs `stow --no-folding --dir "$REPO_ROOT/dotfiles" -S . -t "$HOME"` (and `-D` on uninstall), which mirrors `dotfiles/` directly into `$HOME`. That means:
 
-- `.config/tmux/tmux.conf` in the repo → `~/.config/tmux/tmux.conf` symlink
-- `.local/share/my/bin/` in the repo → `~/.local/share/my/bin/` symlinks
+- `dotfiles/.config/tmux/tmux.conf` → `~/.config/tmux/tmux.conf` symlink
+- `dotfiles/.local/share/my/bin/` → `~/.local/share/my/bin/` symlinks
 
-When editing a dotfile, the real file is always here in the repo; the path under `~/.config` is a symlink.
+`--no-folding` makes stow link individual files rather than whole directories, so real directories are created under `$HOME` and tool-generated files (plugins, caches, state) land there instead of in the repo. Files at the repo root (`install`, `install.d/`, `README.md`, …) sit outside `dotfiles/` and are never stowed.
+
+When editing a dotfile, edit it under `dotfiles/` in the repo; the path under `$HOME` is a symlink to it.
 
 ## Key Environment Variables
 
@@ -40,7 +45,7 @@ Set by `shared.envs.sh` and available in all shell sessions after install:
 ### `require.sh` — module loader
 
 ```bash
-source "$PROJECT_ROOT/.local/share/my/lib/bash/require.sh" logger
+source "$MY_LIB_DIR/bash/require.sh" logger
 ```
 
 Resolves modules by name from `$MY_LIB_DIR/bash/`. Safe to call multiple times — each module is sourced at most once per session via guard variables.
@@ -95,7 +100,7 @@ on_exit() {
 set -euEo pipefail
 trap on_exit EXIT
 
-source "$PROJECT_ROOT/.local/share/my/lib/bash/logger.sh"
+source "$MY_LIB_DIR/bash/logger.sh"
 msg=""  # initialize before any failable command so trap is always safe
 msg=$(some-child-script "$@" 2>&1)
 ```
