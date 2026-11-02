@@ -25,18 +25,18 @@ GIT_CONFIGS=(
 )
 
 on_init() {
-  info "$(basename $module) initializing..."
 
-  # Modules are sourced in their own subshell, so exiting here skips the
-  # install/uninstall hook without failing the run.
-  if [[ "$(sys-get-os)" == "nixos" ]]; then
-    warn "No need to configure 'git' on NixOs." 2>&1 | indent
-    exit 0
-  fi
+  info "initializing module '$(basename ${BASH_SOURCE[0]})'"
+  # # Modules are sourced in their own subshell, so exiting here skips the
+  # # install/uninstall hook without failing the run.
+  # if [[ "$(sys-get-os)" == "nixos" ]]; then
+  #   warn "No need to configure 'git' on NixOs." 2>&1 | indent
+  #   return 1
+  # fi
 }
 
 on_install() {
-  info "$(basename $module) installing..."
+  info "installing module '$(basename ${BASH_SOURCE[0]})'"
   local entry key value
 
   for entry in "${GIT_CONFIGS[@]}"; do
@@ -48,12 +48,17 @@ on_install() {
 }
 
 on_uninstall() {
-  info "$(basename $module) installing..."
+  info "uninstalling module '$(basename $BASH_SOURCE[0])'"
   local entry key
 
   for entry in "${GIT_CONFIGS[@]}"; do
     key="${entry%%:*}"
-    warn "Unsetting '$key'..." 2>&1 | indent
+    debug "Unsetting '$key'..." 2>&1 | indent
     git config --global --unset "$key" || true
   done
 }
+
+on_completed() {
+  info "'$(basename ${BASH_SOURCE[0]})' completed!"
+}
+

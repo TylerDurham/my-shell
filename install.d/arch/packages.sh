@@ -1,61 +1,62 @@
 #!/usr/bin/env bash
 
 packages=(
-    bun
-    ghostty
-    github-cli
-    go-tools
-    gopls
-    just
-    lazygit
-    lsd
-    mise
-    neovim
-    nodejs
-    prettier
-    python-black
-    python-isort
-    starship
-    stow
-    stylua
-    tree
-    tree-sitter
-    uv
-    zoxide
+  bun
+  github-cli
+  go-tools
+  gopls
+  just
+  lazygit
+  lsd
+  mise
+  neovim
+  nodejs
+  prettier
+  python-black
+  python-isort
+  starship
+  stow
+  stylua
+  tree
+  tree-sitter
+  uv
+  zoxide
 )
 
 # don't add if on cachyos.. installed by default
-[[ "$OS" != "cachyos" ]] && packages+=$(fzf)
 [[ "$OS" != "cachyos" ]] && packages+=$(fzf)
 [[ "$OS" != "cachyos" ]] && packages+=$(git)
 [[ "$OS" != "cachyos" ]] && packages+=$(python)
 [[ "$OS" != "cachyos" ]] && packages+=$(vim)
 [[ "$OS" != "cachyos" ]] && packages+=$(zsh)
-[[ "$OS" != "cachyos" ]] && packages+=$(kitty)
 
 on_init() {
-    info "initializing module '$(basename $0)'"
+  info "initializing module '$(basename $0)'"
 }
 
 on_install() {
-    info "installing module '$(basename $0)'"
-    for package in "${packages[@]}"; do
-       if ! check-package "$package"; then
-           info "installing package '$package'..."
-           sudo pacman -Syq --noconfirm "$package"
-        else
-            warn "package '$package' already installed... skipping"
-       fi
-    done
+  info "installing module '$(basename $0)'"
+  for package in "${packages[@]}"; do
+    if ! check-package "$package"; then
+      info "installing package '$package'..."
+      sudo pacman -Syq --noconfirm "$package"
+    else
+      warn "package '$package' already installed... skipping"
+    fi
+  done
 }
 
 on_uninstall() {
-    info "uninstalling module '$(basename $0)'"
-    for package in "${packages[@]}"; do
-        if check-package "$package"; then
-            sudo pacman -Rs --noconfirm "$package"
-        else
-            warn "package '$package' is not installed... skipping"
-        fi
-    done
+  info "uninstalling module '$(basename $0)'"
+  for package in "${packages[@]}"; do
+    if check-package "$package"; then
+      sudo pacman -Rs --noconfirm "$package"
+    else
+      warn "package '$package' is not installed... skipping"
+    fi
+  done
+}
+
+on_completed() {
+  info "module '$(basename $module)' completed!"
 }

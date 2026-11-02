@@ -18,6 +18,7 @@ declare -A OS_ICONS=(
  
     # --- Thekones you asked for ---
     [arch]="\uf303"
+    [cachyos]="\uf303"
     [nixos]="\uf313"
     [fedora]="\uf30a"
     [gentoo]="\uf30d"
