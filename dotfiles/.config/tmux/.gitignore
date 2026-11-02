@@ -1,2 +1,2 @@
+# TPM and its plugins are cloned at install time by tpm.sh; never track them.
 plugins/
-!plugins/tpm/

@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-if [ ! -d "$HOME/.config/tmux/plugins" ]; then
-  mkdir -p "$HOME/.config/tmux/plugins"
-  git clone https://github.com/tmux-plugins/tpm "$HOME/.config/tmux/plugins/tpm"
-else
+TPM_DIR="$HOME/.config/tmux/plugins/tpm"
+
+if [[ -d "$TPM_DIR/.git" ]]; then
   echo "tpm installed already."
+else
+  mkdir -p "$(dirname "$TPM_DIR")"
+  git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
 fi
