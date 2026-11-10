@@ -42,12 +42,16 @@ local state_file = vim.fn.stdpath("data") .. "/saved_colorscheme.txt"
 ---        to ensure highlights persist after colorscheme changes.
 local function set_blink_highlights()
   local h = vim.api.nvim_set_hl
-  -- doc popup: transparent bg (terminal shows through) with bright border
-  h(0, "BlinkCmpDoc",        { bg = "NONE", fg = "#c8d3f5" })
-  h(0, "BlinkCmpDocBorder",  { fg = "#82aaff", bold = true })
+  -- Solid bg matching other floats (Mason, LSP hover); the transparency
+  -- autocmd leaves NormalFloat's bg intact, so this is safe in any order.
+  local float = vim.api.nvim_get_hl(0, { name = "NormalFloat", link = false })
+  local bg = float.bg or vim.api.nvim_get_hl(0, { name = "Normal", link = false }).bg or "NONE"
+  -- doc popup: bright border
+  h(0, "BlinkCmpDoc",        { bg = bg, fg = "#c8d3f5" })
+  h(0, "BlinkCmpDocBorder",  { bg = bg, fg = "#82aaff", bold = true })
   -- completion menu
-  h(0, "BlinkCmpMenu",       { bg = "NONE", fg = "#c8d3f5" })
-  h(0, "BlinkCmpMenuBorder", { fg = "#3d59a1" })
+  h(0, "BlinkCmpMenu",       { bg = bg, fg = "#c8d3f5" })
+  h(0, "BlinkCmpMenuBorder", { bg = bg, fg = "#3d59a1" })
   h(0, "BlinkCmpMenuSelection", { bg = "#2d3f76", bold = true })
 end
 
