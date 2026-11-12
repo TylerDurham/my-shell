@@ -47,8 +47,45 @@ local function clear_bg()
   end
 end
 
+-- Dim text (comments, line numbers, inlay hints) is tuned for the theme's own
+-- bg and loses contrast over the terminal's. Blend each fg toward white.
+local BRIGHTEN = 0.25 -- 0 = theme as-is, 1 = pure white
+
+local function brighten_dim_text()
+  local function lighten(c)
+    local r, g, b = bit.rshift(c, 16), bit.band(bit.rshift(c, 8), 0xff), bit.band(c, 0xff)
+    local function up(x) return math.floor(x + (255 - x) * BRIGHTEN + 0.5) end
+    return bit.bor(bit.lshift(up(r), 16), bit.lshift(up(g), 8), up(b))
+  end
+
+  -- Resolve every group first: @comment usually links to Comment, and reading
+  -- it after Comment is changed would brighten it twice.
+  local updates = {}
+  for _, group in ipairs({
+    "Comment", "@comment",
+    "LineNr", "LineNrAbove", "LineNrBelow",  -- relativenumber uses Above/Below
+    "LspInlayHint", "LspCodeLens",
+    "DiagnosticUnnecessary",                 -- unused vars/imports
+    "NonText", "FoldColumn", "WinSeparator",
+    "BlinkCmpGhostText", "GitSignsCurrentLineBlame",
+  }) do
+    local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+    if hl.fg then
+      updates[group] = vim.tbl_extend("force", hl, { fg = lighten(hl.fg) })
+    end
+  end
+  for group, hl in pairs(updates) do
+    vim.api.nvim_set_hl(0, group, hl)
+  end
+end
+
+local function apply_transparency()
+  clear_bg()
+  brighten_dim_text()
+end
+
 vim.api.nvim_create_autocmd("ColorScheme", {
   group = vim.api.nvim_create_augroup("Transparent", { clear = true }),
-  callback = clear_bg,
+  callback = apply_transparency,
 })
-clear_bg() -- the saved theme loads before this file runs, so apply once now
+apply_transparency() -- the saved theme loads before this file runs, so apply once now
