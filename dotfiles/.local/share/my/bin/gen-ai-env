@@ -15,6 +15,9 @@ source "$filename"
 
 curl -H "Authorization: Bearer $AI_API_TOKEN" "$AI_LLM_URL/api/tags" | jq
 
-echo "source $filename" >> "$HOME/.zshrc"
+# Add to .zshrc, clearing any previous entries
+readonly zshrc="$HOME/.zshrc"
+readonly source_line="source $filename"
+grep -qxF "$source_line" "$zshrc" 2>/dev/null || echo "$source_line" >> "$zshrc"
 
 
