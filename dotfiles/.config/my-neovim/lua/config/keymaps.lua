@@ -2,7 +2,7 @@
 map = vim.keymap.set
 
 -- Quit all
-map({"n", "v"}, "<leader>qq", "<cmd>quitall<cr>", { desc = "Close all files and quit" })
+map({"n", "v"}, "<leader>qa", "<cmd>quitall<cr>", { desc = "Close all files and quit" })
 map({"n", "v"}, "<leader>qb", "<cmd>BufferCloseAllButCurrent<cr>", { desc = "Close all buffers but the current" })
 map({"n", "v"}, "<leader>qr", "<cmd>BufferCloseBuffersRight<cr>", { desc = "Close all buffers to the right of the current" })
 map({"n", "v"}, "<leader>ql", "<cmd>BufferCloseBuffersLeft<cr>", { desc = "Close all buffers to the left of the current" })

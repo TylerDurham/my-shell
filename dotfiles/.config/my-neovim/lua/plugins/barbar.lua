@@ -12,7 +12,7 @@ return {
       -- Barbar (tabs)
       map({"n", "v"}, "<tab>", ":BufferNext<cr>", { desc = "Barber: Next buffer"})
       map({"n", "v"}, "<s-tab>", ":BufferPrevious<cr>", { desc = "Barbar: Previous buffer"})
-      map({"n", "v"}, "<leader>qc", ":BufferClose<cr>", { desc = "Barbar: Close current buffer"})
+      map({"n", "v"}, "<leader>qq", ":BufferClose<cr>", { desc = "Barbar: Close current buffer"})
     end
   },
 }
